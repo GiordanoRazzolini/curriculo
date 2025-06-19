@@ -183,7 +183,7 @@
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-sm flex flex-col">
                     <h3 class="text-lg font-semibold text-slate-800">
-                        <a href="labcq006.pdf" target="_blank" rel="noopener noreferrer">Projeto: Modernização de Laboratório da UTFPR</a>
+                        <a href="Projeto 9_Gestão de projetos.pdf" target="_blank" rel="noopener noreferrer">Projeto: Modernização de Laboratório da UTFPR</a>
                     </h3>
                     <p class="text-slate-500">Projeto Acadêmico | 2024</p>
                     <p class="mt-2 text-slate-600 flex-grow">Planejamento da modernização do laboratório de robótica da UTFPR</p>
@@ -210,7 +210,7 @@
         </div>
     </footer>
 
-    <script>
+ <script>
         document.addEventListener('DOMContentLoaded', function() {
             
             const mobileMenuButton = document.getElementById('mobile-menu-button');
@@ -231,8 +231,6 @@
                     company: '',
                     period: '',
                     details: [
-                        '',
-                        '',
                         ''
                     ]
                 },
@@ -242,8 +240,6 @@
                     company: '',
                     period: '',
                     details: [
-                        '',
-                        '',
                         ''
                     ]
                 },
@@ -253,8 +249,6 @@
                     company: '',
                     period: '',
                     details: [
-                        '',
-                        '',
                         ''
                     ]
                 }
@@ -295,6 +289,15 @@
                 });
             });
 
+            // Function to wrap labels for Chart.js
+            function wrapLabels(labels, maxLength) {
+                return labels.map(label => {
+                    if (label.length > maxLength) {
+                        return label.match(new RegExp(`.{1,${maxLength}}`, 'g')).join('\n');
+                    }
+                    return label;
+                });
+            }
 
             const skillsData = {
                 tech: {
@@ -311,76 +314,90 @@
                 }
             };
 
-            const ctx = document.getElementById('skillsChart').getContext('2d');
-            const skillsChart = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: wrapLabels(skillsData.tech.labels, 16), // Apply wrapping to initial labels
-                    datasets: [{
-                        label: 'Proficiência',
-                        data: skillsData.tech.data,
-                        backgroundColor: 'rgba(56, 189, 248, 0.2)',
-                        borderColor: 'rgba(56, 189, 248, 1)',
-                        borderWidth: 2,
-                        pointBackgroundColor: 'rgba(56, 189, 248, 1)',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgba(56, 189, 248, 1)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            angleLines: { color: 'rgba(0, 0, 0, 0.1)' },
-                            grid: { color: 'rgba(0, 0, 0, 0.1)' },
-                            pointLabels: { 
-                                font: { size: 12 },
-                                color: '#334155'
-                            },
-                            ticks: {
-                                backdropColor: 'transparent',
-                                color: '#64748b',
-                                stepSize: 20
-                            },
-                            min: 0,
-                            max: 100,
-                        }
+            const canvas = document.getElementById('skillsChart');
+            if (!canvas) {
+                console.error("Elemento canvas com ID 'skillsChart' não encontrado.");
+                return; 
+            }
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                console.error("Contexto 2D não disponível para o canvas 'skillsChart'.");
+                return;
+            }
+
+            let skillsChart; 
+
+            try {
+                skillsChart = new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: wrapLabels(skillsData.tech.labels, 16),
+                        datasets: [{
+                            label: 'Proficiência',
+                            data: skillsData.tech.data,
+                            backgroundColor: 'rgba(56, 189, 248, 0.2)',
+                            borderColor: 'rgba(56, 189, 248, 1)',
+                            borderWidth: 2,
+                            pointBackgroundColor: 'rgba(56, 189, 248, 1)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(56, 189, 248, 1)'
+                        }]
                     },
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: { // Required tooltip configuration
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed.r !== null) {
-                                        label += context.parsed.r + '%';
-                                    }
-                                    // Implement 16-char wrapping for tooltip label
-                                    if (label.length > 16) {
-                                        return label.match(/.{1,16}/g); 
-                                    }
-                                    return label;
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                angleLines: { color: 'rgba(0, 0, 0, 0.1)' },
+                                grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                                pointLabels: { 
+                                    font: { size: 12 },
+                                    color: '#334155'
                                 },
-                                title: function(context) {
-                                    const title = context[0].label;
-                                    // Implement 16-char wrapping for tooltip title
-                                    if (title && title.length > 16 && !title.includes('\n')) {
-                                        return title.match(/.{1,16}/g);
+                                ticks: {
+                                    backdropColor: 'transparent',
+                                    color: '#64748b',
+                                    stepSize: 20
+                                },
+                                min: 0,
+                                max: 100,
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: { 
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.r !== null) {
+                                            label += context.parsed.r + '%';
+                                        }
+                                        if (label.length > 16) {
+                                            return label.match(/.{1,16}/g); 
+                                        }
+                                        return label;
+                                    },
+                                    title: function(context) {
+                                        const title = context[0].label;
+                                        if (title && title.length > 16 && !title.includes('\n')) {
+                                            return title.match(/.{1,16}/g);
+                                        }
+                                        return title;
                                     }
-                                    return title;
                                 }
                             }
                         }
                     }
-                }
-            });
+                });
+            } catch (error) {
+                console.error("Erro ao inicializar Chart.js:", error);
+            }
 
             const skillButtons = document.querySelectorAll('.skill-btn');
             skillButtons.forEach(button => {
@@ -393,9 +410,11 @@
                     button.classList.remove('bg-slate-200', 'text-slate-700');
                     
                     const skillType = button.dataset.skill;
-                    skillsChart.data.labels = skillsData[skillType].labels;
-                    skillsChart.data.datasets[0].data = skillsData[skillType].data;
-                    skillsChart.update();
+                    if (skillsChart) { 
+                        skillsChart.data.labels = wrapLabels(skillsData[skillType].labels, 16); 
+                        skillsChart.data.datasets[0].data = skillsData[skillType].data;
+                        skillsChart.update();
+                    }
                 });
             });
         });
