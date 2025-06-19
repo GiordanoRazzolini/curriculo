@@ -255,6 +255,11 @@
             ];
 
             const timelineContainer = document.getElementById('timeline-container');
+            // Added null check for timelineContainer
+            if (!timelineContainer) {
+                console.error("Elemento com ID 'timeline-container' não encontrado. O script não pode renderizar a linha do tempo.");
+                return; // Stop execution if the container is not found
+            }            
             experienceData.forEach((item, index) => {
                 const isLeft = item.side === 'left';
                 const timelineItem = document.createElement('div');
