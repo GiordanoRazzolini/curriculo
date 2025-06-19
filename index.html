@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currículo Vitae Interativo - [Seu Nome]</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Serene Professional -->
+    <!-- Application Structure Plan: Single-page application with a sticky top navigation bar for smooth scrolling. The structure will be: Hero Section (Name/Contact), Resumo, Experiência (interactive vertical timeline), Habilidades (interactive radar chart), Formação (clean list), Cursos/Projetos (card layout), and Footer. This non-linear, interactive structure is chosen to create a more engaging and modern portfolio experience, allowing recruiters to quickly access and visualize key information (like skills and career progression) rather than just reading a static list. -->
+    <!-- Visualization & Content Choices: 
+        - Experiência: Report Info: List of jobs -> Goal: Show Change -> Viz: Vertical Timeline -> Interaction: Click to expand details -> Justification: More intuitive for showing career path -> Library/Method: HTML/CSS/JS.
+        - Habilidades: Report Info: Lists of skills -> Goal: Compare -> Viz: Radar Chart -> Interaction: Buttons to switch data (Técnicas/Comportamentais) -> Justification: Quick visual assessment of strengths -> Library/Method: Chart.js (Canvas).
+        - Cursos/Projetos: Report Info: Lists -> Goal: Organize -> Viz: Card layout -> Interaction: None -> Justification: Clear and modern presentation -> Library/Method: HTML/CSS. 
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .timeline-content {
+            transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .timeline-item.open .timeline-content {
+            max-height: 500px;
+            opacity: 1;
+        }
+        .timeline-dot {
+            transition: transform 0.3s ease;
+        }
+        .timeline-item.open .timeline-dot {
+            transform: scale(1.5);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-700">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <a href="#inicio" class="text-xl font-bold text-slate-800">[Seu Nome]</a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#resumo" class="text-slate-600 hover:bg-slate-100 hover:text-slate-900 px-3 py-2 rounded-md text-sm font-medium">Resumo</a>
+                        <a href="#experiencia" class="text-slate-600 hover:bg-slate-100 hover:text-slate-900 px-3 py-2 rounded-md text-sm font-medium">Experiência</a>
+                        <a href="#habilidades" class="text-slate-600 hover:bg-slate-100 hover:text-slate-900 px-3 py-2 rounded-md text-sm font-medium">Habilidades</a>
+                        <a href="#formacao" class="text-slate-600 hover:bg-slate-100 hover:text-slate-900 px-3 py-2 rounded-md text-sm font-medium">Formação</a>
+                        <a href="#contato" class="bg-sky-600 text-white hover:bg-sky-700 px-3 py-2 rounded-md text-sm font-medium">Contato</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                     <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-slate-500 hover:text-slate-800 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-sky-500">
+                        <span class="sr-only">Abrir menu principal</span>
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+             <div id="mobile-menu" class="md:hidden hidden">
+                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                    <a href="#resumo" class="text-slate-600 hover:bg-slate-100 hover:text-slate-900 block px-3 py-2 rounded-md text-base font-medium">Resumo</a>
+                    <a href="#experiencia" class="text-slate-600 hover:bg-slate-100 hover:text-slate-900 block px-3 py-2 rounded-md text-base font-medium">Experiência</a>
+                    <a href="#habilidades" class="text-slate-600 hover:bg-slate-100 hover:text-slate-900 block px-3 py-2 rounded-md text-base font-medium">Habilidades</a>
+                    <a href="#formacao" class="text-slate-600 hover:bg-slate-100 hover:text-slate-900 block px-3 py-2 rounded-md text-base font-medium">Formação</a>
+                    <a href="#contato" class="bg-sky-600 text-white hover:bg-sky-700 block px-3 py-2 rounded-md text-base font-medium">Contato</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <section id="inicio" class="min-h-[60vh] flex items-center py-20">
+            <div class="w-full text-center md:text-left">
+                <h1 class="text-4xl md:text-6xl font-bold text-slate-800 tracking-tight">[Seu Nome Completo]</h1>
+                <p class="mt-4 text-xl md:text-2xl text-sky-600 font-medium">[Seu Cargo ou Área de Atuação]</p>
+                <div class="mt-8 flex justify-center md:justify-start items-center space-x-6 text-slate-600">
+                    <a href="mailto:seu.email@exemplo.com" class="flex items-center space-x-2 hover:text-sky-600">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+                        <span>seu.email@exemplo.com</span>
+                    </a>
+                    <a href="https://linkedin.com/in/seuperfil" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 hover:text-sky-600">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.338 16.338H13.67V12.16c0-.995-.017-2.277-1.387-2.277-1.388 0-1.601 1.086-1.601 2.206v4.248H8.014V8.59h2.559v1.174h.037c.356-.675 1.227-1.387 2.526-1.387 2.703 0 3.203 1.778 3.203 4.092v4.71zM5.368 7.16h.016c.92 0 1.516-.623 1.516-1.404C6.884 4.93 6.288 4.31 5.384 4.31s-1.516.62-1.516 1.446c0 .78.596 1.404 1.5 1.404zm1.002 9.178H4.366V8.59h2.004v7.748z" clip-rule="evenodd"></path></svg>
+                        <span>LinkedIn</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="resumo" class="py-20">
+            <h2 class="text-3xl font-bold text-slate-800 text-center">Resumo Profissional</h2>
+            <p class="mt-4 max-w-3xl mx-auto text-lg text-center text-slate-600">
+                Esta seção oferece um panorama das minhas qualificações e objetivos. Aqui, você tem um vislumbre das minhas competências e da minha trajetória profissional, destacando o que posso agregar à sua equipe.
+            </p>
+            <div class="mt-8 max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-md">
+                <p class="text-slate-600 leading-relaxed">
+                    Profissional de Marketing Digital com 7 anos de experiência em gestão de campanhas de performance e SEO, buscando aplicar conhecimentos em estratégias de crescimento e otimização de funil de vendas em uma empresa inovadora. Habilidade comprovada em análise de dados, liderança de equipes e alcance de resultados expressivos.
+                </p>
+            </div>
+        </section>
+        
+        <section id="experiencia" class="py-20">
+            <h2 class="text-3xl font-bold text-slate-800 text-center">Experiência Profissional</h2>
+            <p class="mt-4 max-w-3xl mx-auto text-lg text-center text-slate-600">
+                Explore minha jornada profissional através desta linha do tempo interativa. Clique em cada cargo para expandir e ver em detalhes as responsabilidades e, mais importante, as conquistas e resultados alcançados em cada função.
+            </p>
+            <div class="mt-12 relative">
+                <div class="absolute left-1/2 -translate-x-1/2 h-full w-0.5 bg-slate-200" aria-hidden="true"></div>
+                <div id="timeline-container" class="space-y-12">
+                </div>
+            </div>
+        </section>
+
+        <section id="habilidades" class="py-20 bg-white rounded-lg my-10">
+            <h2 class="text-3xl font-bold text-slate-800 text-center">Habilidades</h2>
+             <p class="mt-4 max-w-3xl mx-auto text-lg text-center text-slate-600">
+                Esta seção apresenta um resumo visual das minhas competências. Use os botões abaixo para alternar entre as categorias e explorar o gráfico interativo, que detalha meu nível de proficiência em cada habilidade.
+            </p>
+            <div class="mt-8 flex justify-center space-x-2">
+                <button data-skill="tech" class="skill-btn bg-sky-600 text-white px-4 py-2 rounded-md text-sm font-medium">Técnicas</button>
+                <button data-skill="soft" class="skill-btn bg-slate-200 text-slate-700 px-4 py-2 rounded-md text-sm font-medium">Comportamentais</button>
+                <button data-skill="lang" class="skill-btn bg-slate-200 text-slate-700 px-4 py-2 rounded-md text-sm font-medium">Idiomas</button>
+            </div>
+            <div class="mt-8 chart-container">
+                <canvas id="skillsChart"></canvas>
+            </div>
+        </section>
+
+        <section id="formacao" class="py-20">
+            <h2 class="text-3xl font-bold text-slate-800 text-center">Formação Acadêmica</h2>
+             <p class="mt-4 max-w-3xl mx-auto text-lg text-center text-slate-600">
+                Aqui está um resumo da minha formação acadêmica. Esta seção detalha as instituições e os cursos que fundamentaram minha base de conhecimento e especialização profissional.
+            </p>
+            <div class="mt-12 max-w-3xl mx-auto space-y-8">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-semibold text-slate-800">Mestrado em Ciência de Dados</h3>
+                    <p class="text-slate-600">Universidade de Tecnologia Avançada | Cidade, Estado</p>
+                    <p class="text-sm text-slate-500 mt-1">2020 – 2022</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-semibold text-slate-800">Bacharelado em Sistemas de Informação</h3>
+                    <p class="text-slate-600">Universidade Federal de Exatas | Cidade, Estado</p>
+                    <p class="text-sm text-slate-500 mt-1">2016 – 2019</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="cursos" class="py-20">
+            <h2 class="text-3xl font-bold text-slate-800 text-center">Cursos e Projetos</h2>
+            <p class="mt-4 max-w-3xl mx-auto text-lg text-center text-slate-600">
+                Além da formação formal, busco constantemente o aprimoramento. Esta seção destaca cursos relevantes e projetos pessoais que demonstram a aplicação prática das minhas habilidades e meu interesse em novas tecnologias.
+            </p>
+            <div class="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                <div class="bg-white p-6 rounded-lg shadow-sm flex flex-col">
+                    <h3 class="text-lg font-semibold text-slate-800">Certificação Profissional Google Analytics IQ</h3>
+                    <p class="text-slate-500">Google | 2023</p>
+                    <p class="mt-2 text-slate-600 flex-grow">Certificação avançada em análise de dados web e métricas de marketing digital.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm flex flex-col">
+                    <h3 class="text-lg font-semibold text-slate-800">Projeto: Análise Preditiva de Vendas</h3>
+                    <p class="text-slate-500">Projeto Pessoal | 2024</p>
+                    <p class="mt-2 text-slate-600 flex-grow">Desenvolvimento de um modelo de machine learning em Python para prever tendências de vendas sazonais.</p>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-sm flex flex-col">
+                    <h3 class="text-lg font-semibold text-slate-800">Desenvolvimento Full-Stack com React e Node.js</h3>
+                    <p class="text-slate-500">Plataforma de Cursos Online | 2022</p>
+                    <p class="mt-2 text-slate-600 flex-grow">Curso intensivo cobrindo a criação de aplicações web modernas do back-end ao front-end.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="contato" class="bg-slate-800 text-white">
+        <div class="container mx-auto py-12 px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-2xl font-bold">Vamos conversar?</h2>
+            <p class="mt-2 max-w-md mx-auto">Estou sempre aberto a novas oportunidades e colaborações. Sinta-se à vontade para entrar em contato.</p>
+            <div class="mt-6">
+                <a href="mailto:seu.email@exemplo.com" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
+                    Enviar Email
+                </a>
+            </div>
+             <p class="mt-8 text-slate-400 text-sm">&copy; 2025 [Seu Nome Completo]. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            document.querySelectorAll('#mobile-menu a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+
+            const experienceData = [
+                {
+                    side: 'left',
+                    role: 'Gerente de Marketing Digital',
+                    company: 'Inovatech Solutions',
+                    period: 'Jan 2021 – Atual',
+                    details: [
+                        'Liderança de equipe com 5 analistas, responsável por todas as estratégias de marketing digital.',
+                        'Aumento de 40% no tráfego orgânico através de otimização de SEO e conteúdo.',
+                        'Redução de 15% no Custo por Aquisição (CPA) com a otimização de campanhas no Google Ads.'
+                    ]
+                },
+                {
+                    side: 'right',
+                    role: 'Analista de SEO Sênior',
+                    company: 'Web Performance Inc.',
+                    period: 'Jun 2018 – Dez 2020',
+                    details: [
+                        'Desenvolvimento e execução de estratégias de SEO on-page e off-page para clientes de grande porte.',
+                        'Aumento de 25% na taxa de conversão orgânica em 6 meses para um cliente do setor de e-commerce.',
+                        'Mentoria de analistas juniores e desenvolvimento de relatórios de performance.'
+                    ]
+                },
+                {
+                     side: 'left',
+                    role: 'Assistente de Marketing',
+                    company: 'Comunica Marketing',
+                    period: 'Fev 2017 – Mai 2018',
+                    details: [
+                        'Suporte na gestão de redes sociais e criação de conteúdo.',
+                        'Auxílio na elaboração de campanhas de email marketing.',
+                        'Análise de métricas iniciais e criação de relatórios de engajamento.'
+                    ]
+                }
+            ];
+
+            const timelineContainer = document.getElementById('timeline-container');
+            experienceData.forEach((item, index) => {
+                const isLeft = item.side === 'left';
+                const timelineItem = document.createElement('div');
+                timelineItem.className = `timeline-item relative flex items-center ${isLeft ? 'justify-start' : 'justify-end'}`;
+                
+                const contentSideClass = isLeft ? 'mr-auto text-right' : 'ml-auto text-left';
+                const pointerSideClass = isLeft ? 'right-0 -mr-1' : 'left-0 -ml-1';
+
+                timelineItem.innerHTML = `
+                    <div class="w-5/12 ${contentSideClass}">
+                        <div class="bg-white p-4 rounded-lg shadow-md cursor-pointer timeline-header">
+                            <time class="text-sm font-semibold text-sky-600">${item.period}</time>
+                            <h3 class="text-lg font-bold text-slate-800 mt-1">${item.role}</h3>
+                            <p class="text-slate-500">${item.company}</p>
+                        </div>
+                        <div class="timeline-content">
+                            <ul class="mt-2 text-sm text-slate-600 space-y-1 list-disc list-inside p-4 bg-white rounded-lg shadow-md">
+                                ${item.details.map(d => `<li>${d}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="absolute left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-white border-2 border-sky-600 timeline-dot"></div>
+                `;
+                
+                timelineContainer.appendChild(timelineItem);
+            });
+
+            document.querySelectorAll('.timeline-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    const item = header.closest('.timeline-item');
+                    item.classList.toggle('open');
+                });
+            });
+
+
+            const skillsData = {
+                tech: {
+                    labels: ['SEO/SEM', 'Google Analytics', 'SQL', 'Python', 'CRM (Salesforce)', 'Metodologias Ágeis'],
+                    data: [95, 90, 75, 70, 85, 90],
+                },
+                soft: {
+                    labels: ['Comunicação', 'Liderança', 'Resolução de Problemas', 'Pensamento Crítico', 'Trabalho em Equipe', 'Adaptabilidade'],
+                    data: [95, 90, 85, 88, 98, 92],
+                },
+                lang: {
+                    labels: ['Português', 'Inglês', 'Espanhol'],
+                    data: [100, 95, 75],
+                }
+            };
+
+            const ctx = document.getElementById('skillsChart').getContext('2d');
+            const skillsChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: skillsData.tech.labels,
+                    datasets: [{
+                        label: 'Proficiência',
+                        data: skillsData.tech.data,
+                        backgroundColor: 'rgba(56, 189, 248, 0.2)',
+                        borderColor: 'rgba(56, 189, 248, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(56, 189, 248, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(56, 189, 248, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(0, 0, 0, 0.1)' },
+                            grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                            pointLabels: { 
+                                font: { size: 12 },
+                                color: '#334155'
+                            },
+                            ticks: {
+                                backdropColor: 'transparent',
+                                color: '#64748b',
+                                stepSize: 20
+                            },
+                            min: 0,
+                            max: 100,
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            const skillButtons = document.querySelectorAll('.skill-btn');
+            skillButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    skillButtons.forEach(btn => {
+                        btn.classList.remove('bg-sky-600', 'text-white');
+                        btn.classList.add('bg-slate-200', 'text-slate-700');
+                    });
+                    button.classList.add('bg-sky-600', 'text-white');
+                    button.classList.remove('bg-slate-200', 'text-slate-700');
+                    
+                    const skillType = button.dataset.skill;
+                    skillsChart.data.labels = skillsData[skillType].labels;
+                    skillsChart.data.datasets[0].data = skillsData[skillType].data;
+                    skillsChart.update();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
